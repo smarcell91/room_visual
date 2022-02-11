@@ -8,17 +8,18 @@ const WALL_HEIGHT = 30;
 const WALL_THICKNESS = 5;
 
 const WALL_NUM = 4;
-const WALLS = [
-    {x1: 0, y1: 0, x2: 100, y2: 0},
-    {x1: 100, y1: 0, x2: 100, y2: 100},
-    {x1: 100, y1: 100, x2: 0, y2: 100},
-    {x1: 0, y1: 100, x2: 0, y2: 0},
+let WALLS = [
+    // {x1: -50, y1: -20, x2: 40, y2: -40},
+    // {x1: 40, y1: -40, x2: 120, y2: -10},
+    // {x1: 120, y1: -10, x2: 100, y2: 100},
+    // {x1: 100, y1: 100, x2: 0, y2: 100},
+    // {x1: 0, y1: 100, x2: -50, y2: -20}
     // {x1: 100, y1: 0, x2: 0, y2: 100},
     // {x1: 0, y1: 0, x2: 100, y2: 100}
 ];
-const ROOMS = 1;
-const WALL_INDEX = [
-    [0, 1, 2, 3]
+const ROOMS = 0;
+let WALL_INDEX = [
+    // [0, 1, 2, 3, 4]
 ];
 
 var scene = new THREE.Scene();
@@ -116,11 +117,10 @@ function wallLength(coord) {
         b = coord.y1;
     }
     else {
-        a = coord.y1-coord.x1;
-        b = coord.y2-coord.x2;
+        a = coord.x2-coord.x1;
+        b = coord.y2-coord.y1;
     }
     c = (a*a) + (b*b);
-    console.log(Math.sqrt(c));
     return Math.sqrt(c);
 }
 
@@ -133,21 +133,139 @@ var light = new THREE.PointLight(0xFFFFFF, 1, 500);
 light.position.set(20, -60, WALL_HEIGHT+100);
 scene.add(light);
 
-const floor = new THREE.Mesh(
-    new THREE.PlaneBufferGeometry(100, 100),
-    new THREE.MeshBasicMaterial({ color: 0xfcba03 })
-)
-floor.position.set(50, 50, 0);
-console.log(floor);
-scene.add(floor);
-
-makeWalls();
-
 var render = function() {
     requestAnimationFrame(render);
     renderer.render(scene, camera);
 }
 
 render();
+
+
+function makeFloor() {
+    for (let i=0; i < WALL_INDEX.length; i++) {
+        let shape = new THREE.Shape();
+        let toFirstEndpoint = false;
+        for (let j=0; j < WALL_INDEX[i].length; j++) {
+            let wall = WALLS[WALL_INDEX[i][j]];
+            if (j === 0) {
+                shape.moveTo(wall.x1, wall.y1);
+                shape.lineTo(wall.x2, wall.y2);
+            }
+            else {
+                let lastWall = WALLS[WALL_INDEX[i][j-1]];
+                shape.lineTo(lastWall.x1, lastWall.y1);
+                shape.lineTo(lastWall.x2, lastWall.y2);
+                
+                
+                // let aPoints = {x1: lastWall.x1, y1: lastWall.y1, x2: wall.x1, y2: wall.y1};
+                // let aDistance = {len: wallLength(aPoints), points: aPoints};
+                // let bPoints = {x1: lastWall.x1, y1: lastWall.y1, x2: wall.x2, y2: wall.y2};
+                // let bDistance = {len: wallLength(bPoints), points: bPoints};
+                // let cPoints = {x1: lastWall.x2, y1: lastWall.y2, x2: wall.x1, y2: wall.y1};
+                // let cDistance = {len: wallLength(cPoints), points: cPoints};
+                // let dPoints = {x1: lastWall.x2, y1: lastWall.y2, x2: wall.x2, y2: wall.y2};
+                // let dDistance = {len: wallLength(dPoints), points: dPoints};
+                
+                // let list = [aDistance, bDistance, cDistance, dDistance];
+                // let nearest = list[0];
+                // for (let dist of list) {
+                //     if (dist.len < nearest.len) {
+                //         nearest = dist;
+                //     }
+                // }
+                // if (aDistance > bDistance) {
+                //     shape.lineTo(wall.x2, wall.y2);
+                //     shape.lineTo(wall.x1, wall.y1);
+                //     toFirstEndpoint = true;
+                // }
+                // else {
+                //     shape.lineTo(wall.x1, wall.y1);
+                //     shape.lineTo(wall.x2, wall.y2);
+                //     toFirstEndpoint = false;
+                // }
+                // if (j === WALL_INDEX[i].length-1) {
+                //     shape.moveTo(WALLS[WALL_INDEX[i][0]].x1, WALLS[WALL_INDEX[i][0]].y1);
+                // }
+            }
+
+        }
+        let geometry = new THREE.ShapeGeometry(shape);
+        let material = new THREE.MeshBasicMaterial({ color: 0xfcba03 });
+        let floor = new THREE.Mesh(geometry, material);
+        scene.add(floor);
+    }
+}
+
+
+function wallInput() {
+    const addBtn = document.getElementById("addWallBtn");
+    const x1 = document.getElementById("x1");
+    const y1 = document.getElementById("y1");
+    const x2 = document.getElementById("x2");
+    const y2 = document.getElementById("y2");
+    addBtn.addEventListener("click", () => {
+        let newWall = {x1: parseInt(x1.value), y1: parseInt(y1.value), x2: parseInt(x2.value), y2: parseInt(y2.value)};
+        if (!Object.values(newWall).includes("")) {
+            WALLS.push(newWall);
+            makeWallList();
+            x1.value = "";
+            y1.value = "";
+            x2.value = "";
+            y2.value = "";
+        }
+        makeWalls();
+    });
+}
+
+
+function makeWallList() {
+    if (WALLS.length > 0) {
+        document.getElementById("addRoomDiv").style.display = "block";
+    }
+    const wallList = document.getElementById("wallList");
+    wallList.innerHTML = "";
+    for (let i=0; i < WALLS.length; i++) {
+        let w = WALLS[i];
+        let text = "" + i + ". " + "(" + w.x1 +"; " + w.y1 + "), (" + w.x2 + "; " + w.y2 + ")";
+        const listItem = document.createElement("li");
+        const textnode = document.createTextNode(text);
+        const checkBox = document.createElement("input");
+        checkBox.setAttribute("type", "checkbox");
+        checkBox.setAttribute("class", "addRoomCB");
+        checkBox.setAttribute("id", i);
+        listItem.appendChild(textnode);
+        listItem.appendChild(checkBox);
+        wallList.appendChild(listItem);
+    }
+    makeWalls();
+}
+
+
+function makeRoom() {
+    const makeBtn = document.getElementById("addRoom");
+    const cB = document.getElementsByClassName("addRoomCB");
+    let wallIndexes = [];
+    makeBtn.addEventListener("click", () => {
+        for (let box of cB) {
+            if (box.checked) {
+                wallIndexes.push(parseInt(box.id));
+                box.checked = false;
+            }
+        }
+        if (wallIndexes.length > 2) {
+            WALL_INDEX.push(wallIndexes);
+            makeFloor();
+        }
+    })
+}
+
+makeWallList()
+makeFloor();
+wallInput();
+makeRoom();
+
+
+
+
 
 

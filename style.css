@@ -5,3 +5,11 @@ body {
 canvas { 
     display: block;
 }
+
+#wallCoord {
+    padding: 20px;
+}
+
+.addRoomDiv {
+    display: none;
+}

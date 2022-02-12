@@ -8,21 +8,21 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <script type="module" src="script.js" defer></script>
-  <div>
-    <button id="addWallBtn">Add Wall</button>
+  <script type="module" src="js/script.js"></script>
+  
     <div id="wallCoord">
-      <label>x1</label><input class="inputField" type="number" id="x1" required>
-      <label>y1</label><input class="inputField" type="number" id="y1" required>
-      <label>x2</label><input class="inputField" type="number" id="x2" required>
-      <label>y2</label><input class="inputField" type="number" id="y2" required>
-      
+      <label>x1</label><input class="inputField" type="number" id="x1">
+      <label>y1</label><input class="inputField" type="number" id="y1">
+      <label>x2</label><input class="inputField" type="number" id="x2">
+      <label>y2</label><input class="inputField" type="number" id="y2">
+      <button id="addWallBtn">Add Wall</button>
       <ul id="wallList"></ul>
       <div id="addRoomDiv">
         <label>choose walls for the room</label>
         <button id="addRoom">Make room</button>
       </div>
     </div>
-  </div>
+    <div id="canvas">
+    </div>
 </body>
 </html>

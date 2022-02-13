@@ -1,4 +1,5 @@
 
+
 export const Dom = {
 
     wheelZoom: function(camera) {
@@ -30,7 +31,7 @@ export const Dom = {
     },
 
 
-    makeWallList: function(walls) {
+    makeWallList: function(walls, delEvent, focusEvent) {
         if (walls.length > 0) {
             document.getElementById("addRoomDiv").style.display = "block";
         }
@@ -39,15 +40,34 @@ export const Dom = {
         for (let i=0; i < walls.length; i++) {
             let w = walls[i];
             let text = "" + i + ". " + "(" + w.x1 +"; " + w.y1 + "), (" + w.x2 + "; " + w.y2 + ")";
-            const listItem = document.createElement("li");
-            const textnode = document.createTextNode(text);
-            const checkBox = document.createElement("input");
+
+            let tr = document.createElement("tr");
+            let textnode = document.createTextNode(text);
+
+            let checkBox = document.createElement("input");
             checkBox.setAttribute("type", "checkbox");
             checkBox.setAttribute("class", "addRoomCB");
             checkBox.setAttribute("id", i);
-            listItem.appendChild(textnode);
-            listItem.appendChild(checkBox);
-            wallList.appendChild(listItem);
+
+            let delBtn = document.createElement("button");
+            delBtn.innerText = "X";
+            delBtn.addEventListener("click", () => {
+                delEvent(i);
+            });
+
+            let focusBtn = document.createElement("button");
+            focusBtn.innerHTML = "&#128065";
+            focusBtn.addEventListener("click", () => {
+                focusEvent(w);
+            });
+
+            for (let elem of [textnode, checkBox, delBtn, focusBtn]) {
+                let td = document.createElement("td");
+                td.appendChild(elem);
+                tr.appendChild(td);
+            }
+            
+            wallList.appendChild(tr);
         }
     },
 
@@ -66,6 +86,6 @@ export const Dom = {
             if (wallIndexes.length > 2) {
                 callback(wallIndexes);
             }
-        })
+        });
     }
 }

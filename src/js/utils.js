@@ -1,7 +1,7 @@
 
 export const Utils = {
     
-    //Calculates the coordinate between the two endpoints
+    //Calculates the mid coordinate between the two endpoints
     midPosition: function(coord) {
         let x = coord.x1 + coord.x2;
         let y = coord.y1 + coord.y2;
@@ -68,17 +68,23 @@ export const Utils = {
     },
 
 
+    // Checks the largest number from coordinates and calculates gridsize
     gridSize: function(walls) {
-        let biggest = walls[0].x1;
-        for (let wall of walls) {
-            for (let k of Object.keys(wall)) {
-                let abs = Math.abs(wall[k]);
-                if (abs > biggest) {
-                    console.log("BIGGER");
-                    biggest = abs;
+        let largest;
+        if (walls.length > 0) {
+            largest = walls[0].x1;
+            for (let wall of walls) {
+                for (let k of Object.keys(wall)) {
+                    let abs = Math.abs(wall[k]);
+                    if (abs > largest) {
+                        largest = abs;
+                    }
                 }
             }
         }
-        return (Math.ceil(biggest/100) * 100)*2;
+        else {
+            largest = 100;
+        }
+        return (Math.ceil(largest/100) * 100)*2;
     }
 }

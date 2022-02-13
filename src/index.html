@@ -9,20 +9,24 @@
 </head>
 <body>
   <script type="module" src="js/script.js"></script>
-  
+
+  <h4>Recommended coordinates are between -200 and 200</h4>
+
     <div id="wallCoord">
       <label>x1</label><input class="inputField" type="number" id="x1">
       <label>y1</label><input class="inputField" type="number" id="y1">
       <label>x2</label><input class="inputField" type="number" id="x2">
       <label>y2</label><input class="inputField" type="number" id="y2">
       <button id="addWallBtn">Add Wall</button>
-      <ul id="wallList"></ul>
+
+      <table id="wallList"></table>
+
       <div id="addRoomDiv">
-        <label>choose walls for the room</label>
+        <label>choose walls for the room (min 3)</label>
         <button id="addRoom">Make room</button>
       </div>
     </div>
-    <div id="canvas">
-    </div>
+
+    <div id="canvas"></div>
 </body>
 </html>

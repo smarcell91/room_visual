@@ -18,10 +18,11 @@ export const Dom = {
         const y1 = document.getElementById("y1");
         const x2 = document.getElementById("x2");
         const y2 = document.getElementById("y2");
+        const colorCB = document.getElementById("colorCB");
         addBtn.addEventListener("click", () => {
             let newWall = {x1: parseInt(x1.value), y1: parseInt(y1.value), x2: parseInt(x2.value), y2: parseInt(y2.value)};
             if (!Object.values(newWall).includes("")) {
-                callback(newWall);
+                callback(newWall, colorCB.checked);
                 x1.value = x2.value;
                 y1.value = y2.value;
                 x2.value = "";
@@ -75,8 +76,9 @@ export const Dom = {
     makeRoom: function(callback) {
         const makeBtn = document.getElementById("addRoom");
         const cB = document.getElementsByClassName("addRoomCB");
-        let wallIndexes = [];
+        
         makeBtn.addEventListener("click", () => {
+            let wallIndexes = [];
             for (let box of cB) {
                 if (box.checked) {
                     wallIndexes.push(parseInt(box.id));
@@ -91,6 +93,9 @@ export const Dom = {
 
 
     roomList: function(wallIndexes) {
+        if (wallIndexes.length > 0) {
+            document.getElementById("roomList").style.display = "block";
+        }
         let ol = document.getElementById("rooms");
         ol.innerHTML = "";
         if (wallIndexes.length > 0) {
@@ -100,7 +105,7 @@ export const Dom = {
                 for (let index of wallIndexes[i]) {
                     text += index + " ";
                 }
-                
+
                 let li = document.createElement("li");
                 let textnode = document.createTextNode(text);
                 li.appendChild(textnode);

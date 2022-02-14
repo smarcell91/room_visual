@@ -7,7 +7,7 @@ import { Dom } from './dom.js';
 
 const WALL_HEIGHT = 40;
 const WALL_THICKNESS = 5;
-let COLOR = 0xFFCC00;      // set wall color
+let COLOR = 0xFFFFFF;      // set wall color
 
 let WALL_NUM = 0;
 
@@ -33,7 +33,7 @@ camera.position.set(0, 0, WALL_HEIGHT+200);
 camera.lookAt(0, 0, 0);
 
 const renderer = new THREE.WebGLRenderer();
-renderer.setClearColor("#dedede");
+renderer.setClearColor("#d0ddf2");
 renderer.setSize(WIDTH, HEIGHT);
 
 canvas.appendChild(renderer.domElement);
@@ -51,7 +51,10 @@ render();
 
 Dom.wheelZoom(camera);
 
-Dom.wallInput((wall) => {
+Dom.wallInput((wall, color) => {
+    if (color) {
+        COLOR = 0xFFCC00 + (WALLS.length-1)*1000;
+    }
     WALLS.push(wall);
     makeWall(wall, WALLS.length-1);
     wallList();
@@ -98,9 +101,8 @@ function makeWall(wall, index) {
     let wallLen = Utils.wallLength(wall);
     let pos = Utils.midPosition(wall);
     let angle = Utils.wallAngle(wall);
-    let color = COLOR + index*1000;
     let geometry = new THREE.BoxGeometry(wallLen, WALL_THICKNESS, WALL_HEIGHT);
-    let material = new THREE.MeshToonMaterial({color: color});
+    let material = new THREE.MeshToonMaterial({color: COLOR});
 
     let mesh = new THREE.Mesh(geometry, material);
     mesh.name = "wallMesh";
@@ -111,6 +113,7 @@ function makeWall(wall, index) {
     makeGrid();
     scene.add(mesh);
     cameraLook(wall);
+    COLOR = 0xFFFFFF;
 }
 
 

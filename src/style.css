@@ -1,6 +1,7 @@
 body { 
     margin: 0;
     height: 100vh;
+    background-color: #fffde8;
 }
 
 #wallCoord {
@@ -8,7 +9,11 @@ body {
     padding: 20px;
 }
 
-.addRoomDiv {
+#addRoomDiv {
+    display: none;
+}
+
+#roomList {
     display: none;
 }
 

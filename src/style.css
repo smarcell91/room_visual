@@ -1,0 +1,28 @@
+body { 
+    margin: 0;
+    height: 100vh;
+}
+
+#wallCoord {
+    float: left;
+    padding: 20px;
+}
+
+.addRoomDiv {
+    display: none;
+}
+
+.inputField {
+    width: 60px;
+}
+
+#canvas {
+    float: right;
+    width: 900px;
+    height: 800px;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    border: 2px solid black;
+    padding: 0px;
+}

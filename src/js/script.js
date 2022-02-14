@@ -7,17 +7,18 @@ import { Dom } from './dom.js';
 
 const WALL_HEIGHT = 40;
 const WALL_THICKNESS = 5;
+let COLOR = 0xFFCC00;      // set wall color
 
 let WALL_NUM = 0;
 
 const WALLS = [
-    {x1: -10, y1: -10, x2: 100, y2: -10},
-    {x1: 100, y1: -10, x2: 100, y2: 110},
-    {x1: 100, y1: 110, x2: -20, y2: 100},
-    {x1: -20, y1: 100, x2: -10, y2: -10}
+    // {x1: -10, y1: -10, x2: 51, y2: -10},
+    // {x1: 51, y1: -10, x2: 100, y2: 10},
+    // {x1: 100, y1: 110, x2: -20, y2: 100},
+    // {x1: -20, y1: 100, x2: -10, y2: -10}
 ];
 const WALL_INDEX = [
-    
+    // [0, 1, 2, 3]
 ];
 let ROOMS = WALL_INDEX.length;
 
@@ -58,6 +59,7 @@ Dom.wallInput((wall) => {
 
 Dom.makeRoom((wallIndexes) => {
     WALL_INDEX.push(wallIndexes);
+    Dom.roomList(WALL_INDEX);
     makeFloor();
 });
 
@@ -81,6 +83,7 @@ function wallList() {
             cameraLook(wall);
         }
     );
+    Dom.roomList(WALL_INDEX);
 }
 
 
@@ -94,8 +97,8 @@ function makeWalls() {
 function makeWall(wall, index) {
     let wallLen = Utils.wallLength(wall);
     let pos = Utils.midPosition(wall);
-
-    let color = 0xFFCC00 + index*1000;      // set wall color
+    let angle = Utils.wallAngle(wall);
+    let color = COLOR + index*1000;
     let geometry = new THREE.BoxGeometry(wallLen, WALL_THICKNESS, WALL_HEIGHT);
     let material = new THREE.MeshToonMaterial({color: color});
 
@@ -103,8 +106,8 @@ function makeWall(wall, index) {
     mesh.name = "wallMesh";
     mesh.id2 = index;
     mesh.position.set(pos.x, pos.y, WALL_HEIGHT/2);
-
-    Utils.rotateMesh(wall, mesh);
+    mesh.rotation.set(0, 0, angle);
+    
     makeGrid();
     scene.add(mesh);
     cameraLook(wall);
@@ -127,14 +130,14 @@ function makeFloor() {
         let shape = new THREE.Shape();
         for (let j=0; j < WALL_INDEX[i].length; j++) {
             let wall = WALLS[WALL_INDEX[i][j]];
+            
             if (j === 0) {
                 shape.moveTo(wall.x1, wall.y1);
                 shape.lineTo(wall.x2, wall.y2);
             }
             else {
-                let lastWall = WALLS[WALL_INDEX[i][j-1]];
-                shape.lineTo(lastWall.x1, lastWall.y1);
-                shape.lineTo(lastWall.x2, lastWall.y2);
+                shape.lineTo(wall.x1, wall.y1);
+                shape.lineTo(wall.x2, wall.y2);
             }
         }
         let geometry = new THREE.ShapeGeometry(shape);
@@ -149,6 +152,20 @@ function makeFloor() {
 }
 
 
+// function wallCorner(wall1, wall2) {
+//     let angle1 = Utils.wallAngle(wall1);
+//     let angle2 = Utils.wallAngle(wall2);
+//     console.log(angle1, angle2);
+//     let plan1 = new THREE.PlaneGeometry(WALL_THICKNESS/2, WALL_HEIGHT);
+//     let plan2 = new THREE.PlaneGeometry(WALL_THICKNESS/2, WALL_HEIGHT);
+//     let material = new THREE.MeshToonMaterial({color: COLOR});
+//     let mesh1 = new THREE.Mesh(plan1, material);
+//     let mesh2 = new THREE.Mesh(plan2, material);
+
+    
+// }
+
+
 function deleteWall(i) {
     let delMesh;
     scene.traverse((object) => {
@@ -160,24 +177,24 @@ function deleteWall(i) {
     });
     delRoomByWall(i);
     scene.remove(delMesh);
-    newId(i);
+    newId(i, "wallMesh");
 }
 
 
-function newId(i) {
+function newId(i, name) {
     scene.traverse( function(object) {
-        if (object.name === "wallMesh" && object.id2 > i) {
+        if (object.name === name && object.id2 > i) {
             object.id2--;
         }
     });
 }
 
 
-function delRoomByWall(index) {
+function delRoomByWall(wallI) {
     for (let i=0; i < WALL_INDEX.length; i++) {
-        if (WALL_INDEX[i].includes(index)) {
+        if (WALL_INDEX[i].includes(wallI)) {
             WALL_INDEX.splice(i, 1);
-            ROOMS = WALL_INDEX.length;
+            Dom.roomList(WALL_INDEX);
             let delMesh;
             scene.traverse((object) => {
                 if (object.name === "floor" && object.id2 === i) {
@@ -185,6 +202,7 @@ function delRoomByWall(index) {
                 }
             });
             scene.remove(delMesh);
+            newId(wallI, "floor");
         }
     }
 }

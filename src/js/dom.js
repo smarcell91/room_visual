@@ -87,5 +87,25 @@ export const Dom = {
                 callback(wallIndexes);
             }
         });
+    },
+
+
+    roomList: function(wallIndexes) {
+        let ol = document.getElementById("rooms");
+        ol.innerHTML = "";
+        if (wallIndexes.length > 0) {
+            for (let i=0; i < wallIndexes.length; i++) {
+
+                let text = "room: ";
+                for (let index of wallIndexes[i]) {
+                    text += index + " ";
+                }
+                
+                let li = document.createElement("li");
+                let textnode = document.createTextNode(text);
+                li.appendChild(textnode);
+                ol.appendChild(li);
+            }
+        }
     }
 }

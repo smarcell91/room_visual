@@ -31,40 +31,38 @@ export const Utils = {
     },
 
 
-    // Rotates the wall
-    rotateMesh: function(wall, mesh) {
+    // Calculates angle of the wall
+    wallAngle: function(wall) {
         let a, b, angle;
 
         if (wall.x1 === wall.x2) {
-            mesh.rotation.set(0, 0, Math.PI/2);
+            angle = Math.PI / 2;
         }
         else if (wall.y1 === wall.y2) {
-            mesh.rotation.set(0, 0, 0);
+            angle = 0;
         }
         else if (wall.y1 > wall.y2 && wall.x1 > wall.x2) {
             a = wall.y1 - wall.y2;
             b = wall.x1 - wall.x2;
             angle = Math.atan(a/b);
-            mesh.rotation.set(0, 0, angle);
         }
         else if (wall.y1 > wall.y2 && wall.x2 > wall.x1) {
             a = wall.y1 - wall.y2;
             b = wall.x2 - wall.x1;
-            angle = Math.atan(a/b);
-            mesh.rotation.set(0, 0, -angle);
+            angle = -(Math.atan(a/b));
         }
         else if (wall.y2 > wall.y1 && wall.x1 > wall.x2) {
             a = wall.y2 - wall.y1;
             b = wall.x1 - wall.x2;
-            angle = Math.atan(a/b);
-            mesh.rotation.set(0, 0, -angle);
+            angle = -(Math.atan(a/b));
         }
         else if (wall.y2 > wall.y1 && wall.x2 > wall.x1) {
             a = wall.y2 - wall.y1;
             b = wall.x2 - wall.x1;
             angle = Math.atan(a/b);
-            mesh.rotation.set(0, 0, angle);
         }
+        let grad = angle * (180/Math.PI);
+        return angle;
     },
 
 
